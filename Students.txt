@@ -2,6 +2,15 @@ STU0001, Nguyen Van A, Software Engineering, 3.4
 STU0002, Tran Thi B, Information Systems, 3.8
 STU0003, Nguyen Van An, Software Engineering, 3.4
 STU0004, Tran Thi Bich, Information Systems, 3.7
-STU0005, Le Hoang Minh, Computer Science, 3.2
+STU0005, Le Hoang Minh, Computer Science, 3.7
 STU0006, Pham Quoc Huy, Artificial Intelligence, 3.9
 STU0007, Vo Thanh Tam, Data Science, 3.5
+STU0080, Tran Duc Anh, Computer Science, 4.0
+STU8888, Nguyen Hoang Anh Khoa, Software Engineering, 3.9
+STU9495, Nguyen Dang Khoa, Software Engineering, 2.2
+STU9030, Le Quoc Bao, Information Technology, 1.7
+STU3030, Pham Thu Ha, Business Administration, 2.8
+STU0095, Vo Thanh Tung, Software Engineering, 1.9
+STU0096, Dang Hoang Nam, Cyber Security, 2.2
+STU4859, Bui Ngoc Anh, Data Science, 2.0
+STU8989, Le Minh Hoang, Software Engineering, 1.7

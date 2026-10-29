@@ -116,121 +116,117 @@ public class StudentTextFile
                             "Invalid GPA at line "
                             + lineNumber + ".");
 
-                
+                }
             }
-        }
-
-        System.out.println(
-                "Loaded " + students.size()
-                + " students from " + fileName + ".");
-
-    }
-    catch (IOException e
-
-    
-        ) {
 
             System.out.println(
-                "Cannot read file: " + fileName);
-    }
+                    "Loaded " + students.size()
+                    + " students from " + fileName + ".");
 
-    return students ;
-}
+        } catch (IOException e) {
+
+            System.out.println(
+                    "Cannot read file: " + fileName);
+        }
+
+        return students;
+    }
 
 // 2. Save students to a text file
-@Override
-public boolean save(
-        String fileName,
-        ArrayList<Student> data) {
+    @Override
+    public boolean save(
+            String fileName,
+            ArrayList<Student> data) {
 
-    if (data == null) {
+        if (data == null) {
 
-        System.out.println("Student data is null.");
-        return false;
-    }
-
-    // Validate all students before opening the file
-    ArrayList<String> studentIds = new ArrayList<>();
-
-    for (int i = 0; i < data.size(); i++) {
-
-        Student student = data.get(i);
-
-        if (student == null) {
-
-            System.out.println(
-                    "Invalid student at position " + (i + 1) + ".");
-
+            System.out.println("Student data is null.");
             return false;
         }
 
-        String studentId = student.getStudentId();
-        String fullName = student.getFullName();
-        String major = student.getMajor();
-        double gpa = student.getGpa();
+        // Validate all students before opening the file
+        ArrayList<String> studentIds = new ArrayList<>();
 
-        // Check Student ID, Full Name, Major and GPA
-        if (studentId == null
-                || !studentValidation.isValidStudentId(studentId)
-                || fullName == null
-                || !studentValidation.isValidFullName(fullName)
-                || major == null
-                || !studentValidation.isValidMajor(major)
-                || !Double.isFinite(gpa)
-                || !studentValidation.isValidGpa(gpa)) {
+        for (int i = 0; i < data.size(); i++) {
+
+            Student student = data.get(i);
+
+            if (student == null) {
+
+                System.out.println(
+                        "Invalid student at position " + (i + 1) + ".");
+
+                return false;
+            }
+
+            String studentId = student.getStudentId();
+            String fullName = student.getFullName();
+            String major = student.getMajor();
+            double gpa = student.getGpa();
+
+            // Check Student ID, Full Name, Major and GPA
+            if (studentId == null
+                    || !studentValidation.isValidStudentId(studentId)
+                    || fullName == null
+                    || !studentValidation.isValidFullName(fullName)
+                    || major == null
+                    || !studentValidation.isValidMajor(major)
+                    || !Double.isFinite(gpa)
+                    || !studentValidation.isValidGpa(gpa)) {
+
+                System.out.println(
+                        "Invalid student data at position "
+                        + (i + 1) + ".");
+
+                return false;
+            }
+
+            // Check duplicate Student ID
+            String normalizedId
+                    = studentId.trim().toUpperCase(Locale.ROOT);
+
+            if (studentIds.contains(normalizedId)) {
+
+                System.out.println(
+                        "Duplicate Student ID: " + studentId);
+
+                return false;
+            }
+
+            studentIds.add(normalizedId);
+        }
+
+        // Write only after the entire list has passed validation
+        try ( BufferedWriter writer = Files.newBufferedWriter(
+                Paths.get(fileName),
+                StandardCharsets.UTF_8)) {
+
+            for (Student student : data) {
+
+                writer.write(
+                        student.getStudentId().trim()
+                                .toUpperCase(Locale.ROOT)
+                        + ", "
+                        + student.getFullName().trim()
+                        + ", "
+                        + student.getMajor().trim()
+                        + ", "
+                        + Double.toString(student.getGpa()));
+
+                writer.newLine();
+            }
 
             System.out.println(
-                    "Invalid student data at position "
-                    + (i + 1) + ".");
+                    "Student data saved successfully.");
+
+            return true;
+
+        } catch (IOException e) {
+
+            System.out.println(
+                    "Cannot save file: " + fileName);
 
             return false;
         }
-
-        // Check duplicate Student ID
-        String normalizedId =
-                studentId.trim().toUpperCase(Locale.ROOT);
-
-        if (studentIds.contains(normalizedId)) {
-
-            System.out.println(
-                    "Duplicate Student ID: " + studentId);
-
-            return false;
-        }
-
-        studentIds.add(normalizedId);
     }
-
-    // Write only after the entire list has passed validation
-    try (BufferedWriter writer = Files.newBufferedWriter(
-            Paths.get(fileName),
-            StandardCharsets.UTF_8)) {
-
-        for (Student student : data) {
-
-            writer.write(
-                    student.getStudentId().trim()
-                    .toUpperCase(Locale.ROOT)
-                    + ", "
-                    + student.getFullName().trim()
-                    + ", "
-                    + student.getMajor().trim()
-                    + ", "
-                    + Double.toString(student.getGpa()));
-
-            writer.newLine();
-        }
-
-        System.out.println(
-                "Student data saved successfully.");
-
-        return true;
-
-    } catch (IOException e) {
-
-        System.out.println(
-                "Cannot save file: " + fileName);
-
-        return false;
-    }
-}}
+}

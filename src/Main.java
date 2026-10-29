@@ -6,6 +6,7 @@ import model.Course;
 import validation.InputValidation;
 import validation.StudentValidation;
 import validation.CourseValidation;
+import java.util.ArrayList;
 
 import java.time.LocalDate;
 
@@ -92,10 +93,14 @@ public class Main {
                         running = false;
                     }
                     break;
+               
+                case 13:
+                    displayFailedStudentsCount();
+                    break;
 
                 default:
                     System.out.println(
-                            "Invalid choice. Please choose 1 to 12.");
+                            "Invalid choice. Please choose 1 to 13.");
             }
         }
 
@@ -127,7 +132,7 @@ public class Main {
         System.out.println("10. Sort students by GPA");
         System.out.println("11. Save data to files");
         System.out.println("12. Quit program");
-
+        System.out.println("13.failed students");
         System.out.println(
                 "==================================================");
     }
@@ -365,11 +370,24 @@ public class Main {
                 continue;
             }
 
-            if (courseMng.courseExists(courseId)) {
-
+//            boolean alreadyRegistered = false;
+//
+//            for (Course c : courseMng.getCourseList()) {
+//                if (c.getCourseId().equalsIgnoreCase(courseId.trim())
+//                        && c.getStudentId().equalsIgnoreCase(studentId.trim())) {
+//                    alreadyRegistered = true;
+//                    break;
+//                }
+//            }
+//
+//            if (alreadyRegistered) {
+//                System.out.println(
+//                        "This student has already registered for this course.");
+//                continue;
+//            }
+            if (courseMng.courseExists(courseId.trim())) {
                 System.out.println(
-                        "Course ID already exists.");
-
+                        "Course ID already exists. Please enter a different Course ID.");
                 continue;
             }
 
@@ -521,4 +539,38 @@ public class Main {
             }
         }
     }
+
+    private void displayFailedStudentsCount() {
+        ArrayList<Student> failedStudents
+                = studentMng.getFailedStudents();
+
+        System.out.println();
+        System.out.println("==================================================================================");
+        System.out.println("                               FAILED STUDENTS LIST");
+        System.out.println("==================================================================================");
+        System.out.println("Total Failed Students: " + failedStudents.size());
+        System.out.println();
+
+        System.out.printf(
+                "%-15s | %-20s | %-30s | %s%n",
+                "Student ID", "Full Name", "Major", "GPA");
+
+        System.out.println("----------------------------------------------------------------------------------");
+
+        if (failedStudents.isEmpty()) {
+            System.out.println("No failed students found.");
+        } else {
+            for (Student student : failedStudents) {
+                System.out.printf(
+                        "%-15s | %-20s | %-30s | %.2f%n",
+                        student.getStudentId(),
+                        student.getFullName(),
+                        student.getMajor(),
+                        student.getGpa());
+            }
+        }
+
+        System.out.println("----------------------------------------------------------------------------------");
+    }
+
 }

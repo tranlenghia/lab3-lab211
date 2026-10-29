@@ -76,11 +76,24 @@ public class CourseMng {
             return false;
         }
 
-        // Check duplicate Course ID
-        if (courseExists(course.getCourseId())) {
+        // Check duplicate registration by the same student
+        for (Course existingCourse : courseList) {
 
-            System.out.println("Course ID already exists.");
-            return false;
+//            if (existingCourse.getCourseId()
+//                    .equalsIgnoreCase(course.getCourseId().trim())
+//                    && existingCourse.getStudentId()
+//                            .equalsIgnoreCase(course.getStudentId().trim())) {
+//
+//                System.out.println(
+//                        "This student has already registered for this course.");
+//
+//                return false;
+//            }
+// Course ID must be unique
+            if (courseExists(course.getCourseId().trim())) {
+                System.out.println("Course ID already exists.");
+                return false;
+            }
         }
 
         // Validate Student ID format
@@ -134,9 +147,7 @@ public class CourseMng {
     }
 
     // 6. Find courses by Student ID
-    public ArrayList<Course> findCoursesByStudentId(
-            String studentId) {
-
+    public ArrayList<Course> findCoursesByStudentId(String studentId) {
         ArrayList<Course> result = new ArrayList<>();
 
         if (studentId == null || studentId.trim().isEmpty()) {
@@ -144,10 +155,9 @@ public class CourseMng {
         }
 
         for (Course course : courseList) {
-
-            if (course.getStudentId()
-                    .equalsIgnoreCase(studentId.trim())) {
-
+            if (course.getStudentId() != null
+                    && course.getStudentId().trim()
+                            .equalsIgnoreCase(studentId.trim())) {
                 result.add(course);
             }
         }
@@ -435,5 +445,111 @@ public class CourseMng {
     // 17. Check whether course list is empty
     public boolean isEmpty() {
         return courseList.isEmpty();
+    }
+
+    public void displayCourseWithMostStudents(StudentMng studentMng) {
+        if (courseList == null || courseList.isEmpty()) {
+            System.out.println("No course data available.");
+            return;
+        }
+
+        // Group registrations by Course Name
+        java.util.Map<String, java.util.Set<String>> courseStudents
+                = new java.util.TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+        for (Course course : courseList) {
+            if (course == null || course.getCourseName() == null
+                    || course.getStudentId() == null) {
+                continue;
+            }
+
+            String courseName = course.getCourseName().trim();
+            String studentId = course.getStudentId().trim();
+
+            if (courseName.isEmpty() || studentId.isEmpty()) {
+                continue;
+            }
+
+            courseStudents
+                    .computeIfAbsent(courseName,
+                            k -> new java.util.TreeSet<>(
+                                    String.CASE_INSENSITIVE_ORDER))
+                    .add(studentId);
+        }
+
+        if (courseStudents.isEmpty()) {
+            System.out.println("No valid course registrations found.");
+            return;
+        }
+
+        // Find the maximum number of registered students
+        int maxStudents = 0;
+
+        for (java.util.Set<String> students : courseStudents.values()) {
+            maxStudents = Math.max(maxStudents, students.size());
+        }
+
+        String titleLine
+                = "================================================================";
+        String separator
+                = "---------------------------------------------------------------------------------------------------------------";
+
+        System.out.println("\n" + titleLine);
+        System.out.println("           COURSE WITH THE MOST STUDENT REGISTRATIONS");
+        System.out.println(titleLine);
+
+        // Display all course names tied for the highest count
+        for (java.util.Map.Entry<String, java.util.Set<String>> entry
+                : courseStudents.entrySet()) {
+
+            if (entry.getValue().size() != maxStudents) {
+                continue;
+            }
+
+            String courseName = entry.getKey();
+
+            System.out.println("Course Name: " + courseName);
+            System.out.println("Total Students: " + maxStudents);
+            System.out.println("\nSTUDENT LIST");
+            System.out.println(separator);
+
+            System.out.printf(
+                    "%-12s | %-20s | %-22s | %-10s | %-25s | %s%n",
+                    "Student ID", "Full Name", "Major",
+                    "Course ID", "Course Name", "GPA");
+
+            System.out.println(separator);
+
+            for (String studentId : entry.getValue()) {
+                Student student = studentMng.findStudentById(studentId);
+
+                if (student == null) {
+                    continue;
+                }
+
+                // Print one row for this student's registration
+                for (Course course : courseList) {
+                    if (course.getCourseName() != null
+                            && course.getStudentId() != null
+                            && course.getCourseName().trim()
+                                    .equalsIgnoreCase(courseName)
+                            && course.getStudentId().trim()
+                                    .equalsIgnoreCase(studentId)) {
+
+                        System.out.printf(
+                                "%-12s | %-20s | %-22s | %-10s | %-25s | %.2f%n",
+                                student.getStudentId(),
+                                student.getFullName(),
+                                student.getMajor(),
+                                course.getCourseId(),
+                                course.getCourseName(),
+                                student.getGpa());
+                    }
+                }
+            }
+
+            System.out.println(separator);
+            System.out.println();
+        }
     }
 }

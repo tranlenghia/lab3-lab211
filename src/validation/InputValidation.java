@@ -85,7 +85,7 @@ public class InputValidation {
             } catch (DateTimeParseException e) {
 
                 System.out.println(
-                        "Invalid date. Please try another format.");
+                        "Invalid date. Please enter a valid date.");
             }
         }
     }

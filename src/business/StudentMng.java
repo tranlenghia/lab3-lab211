@@ -1,4 +1,3 @@
-
 package business;
 
 import java.util.ArrayList;
@@ -169,11 +168,12 @@ public class StudentMng {
         if (major == null || major.trim().isEmpty()) {
             return result;
         }
-
+        String searchMajor = major.trim().toLowerCase();
         for (Student student : studentList) {
 
-            if (student.getMajor()
-                    .equalsIgnoreCase(major.trim())) {
+            if (student.getMajor() != null
+                    && student.getMajor().trim().toLowerCase()
+                            .contains(searchMajor)) {
 
                 result.add(student);
             }
@@ -185,8 +185,8 @@ public class StudentMng {
     // 9. Display students by major
     public void displayStudentsByMajor(String major) {
 
-        ArrayList<Student> result =
-                findStudentsByMajor(major);
+        ArrayList<Student> result
+                = findStudentsByMajor(major);
 
         if (result.isEmpty()) {
             System.out.println(
@@ -198,7 +198,7 @@ public class StudentMng {
                 "Students majoring in: " + major);
 
         System.out.println(
-        "----------------------------------------------------------------------------");
+                "----------------------------------------------------------------------------");
 
         System.out.printf(
                 "%-10s | %-25s | %-28s | %s%n",
@@ -207,15 +207,15 @@ public class StudentMng {
                 "Major",
                 "GPA");
 
-       System.out.println(
-        "----------------------------------------------------------------------------");
+        System.out.println(
+                "----------------------------------------------------------------------------");
 
         for (Student student : result) {
             System.out.println(student);
         }
 
         System.out.println(
-        "----------------------------------------------------------------------------");
+                "----------------------------------------------------------------------------");
 
         System.out.println(
                 "Total students: " + result.size());
@@ -223,61 +223,61 @@ public class StudentMng {
 
     // 10. Sort students by GPA in ascending order
     // 10. Sort a copy of students by GPA in ascending order
-public ArrayList<Student> sortStudentsByGpa() {
+    public ArrayList<Student> sortStudentsByGpa() {
 
-    // Create a copy of the original student list
-    ArrayList<Student> sortedList =
-            new ArrayList<>(studentList);
+        // Create a copy of the original student list
+        ArrayList<Student> sortedList
+                = new ArrayList<>(studentList);
 
-    // Sort the copy by GPA from low to high
-    Collections.sort(
-            sortedList,
-            Comparator.comparingDouble(Student::getGpa));
+        // Sort the copy by GPA from low to high
+        Collections.sort(
+                sortedList,
+                Comparator.comparingDouble(Student::getGpa));
 
-    // Return the sorted copy
-    return sortedList;
-}
+        // Return the sorted copy
+        return sortedList;
+    }
 
 // 11. Display students sorted by GPA
-public void displayStudentsSortedByGpa() {
+    public void displayStudentsSortedByGpa() {
 
-    if (studentList.isEmpty()) {
+        if (studentList.isEmpty()) {
 
-        System.out.println("No students found.");
-        return;
+            System.out.println("No students found.");
+            return;
+        }
+
+        // Get the sorted copy without changing studentList
+        ArrayList<Student> sortedList
+                = sortStudentsByGpa();
+
+        System.out.println(
+                "================ STUDENTS SORTED BY GPA ================");
+
+        System.out.println(
+                "------------------------------------------------------------------------------------");
+
+        System.out.printf(
+                "%-10s | %-25s | %-28s | %s%n",
+                "Student ID",
+                "Full Name",
+                "Major",
+                "GPA");
+
+        System.out.println(
+                "------------------------------------------------------------------------------------");
+
+        // Display the sorted copy
+        for (Student student : sortedList) {
+            System.out.println(student);
+        }
+
+        System.out.println(
+                "------------------------------------------------------------------------------------");
+
+        System.out.println(
+                "Total students: " + sortedList.size());
     }
-
-    // Get the sorted copy without changing studentList
-    ArrayList<Student> sortedList =
-            sortStudentsByGpa();
-
-    System.out.println(
-            "================ STUDENTS SORTED BY GPA ================");
-
-    System.out.println(
-            "------------------------------------------------------------------------------------");
-
-    System.out.printf(
-            "%-10s | %-25s | %-28s | %s%n",
-            "Student ID",
-            "Full Name",
-            "Major",
-            "GPA");
-
-    System.out.println(
-            "------------------------------------------------------------------------------------");
-
-    // Display the sorted copy
-    for (Student student : sortedList) {
-        System.out.println(student);
-    }
-
-    System.out.println(
-            "------------------------------------------------------------------------------------");
-
-    System.out.println(
-            "Total students: " + sortedList.size());
-}
 
     // 12. Remove a student by ID
     public boolean removeStudentById(
@@ -339,4 +339,68 @@ public void displayStudentsSortedByGpa() {
     public boolean isEmpty() {
         return studentList.isEmpty();
     }
+
+    public ArrayList<Student> getExcellentStudents() {
+        ArrayList<Student> result = new ArrayList<>();
+
+        for (Student student : getStudentList()) {
+            if (student.getGpa() >= 3.2) {
+                result.add(student);
+            }
+        }
+
+        return result;
+    }
+    // Find student(s) with the highest GPA
+
+    public ArrayList<Student> getStudentsWithHighestGpa() {
+        ArrayList<Student> result = new ArrayList<>();
+
+        if (studentList == null || studentList.isEmpty()) {
+            return result;
+        }
+
+        double highestGpa = studentList.get(0).getGpa();
+
+        // Find the highest GPA
+        for (Student student : studentList) {
+            if (student.getGpa() > highestGpa) {
+                highestGpa = student.getGpa();
+            }
+        }
+
+        // Get all students who have the highest GPA
+        for (Student student : studentList) {
+            if (Double.compare(student.getGpa(), highestGpa) == 0) {
+                result.add(student);
+            }
+        }
+
+        return result;
+    }
+
+    public ArrayList<Student> getStudentsBelowGpa(double gpa) {
+        ArrayList<Student> result = new ArrayList<>();
+
+        for (Student student : studentList) {
+            if (student.getGpa() < gpa) {
+                result.add(student);
+            }
+        }
+
+        return result;
+    }
+
+    public ArrayList<Student> getFailedStudents() {
+        ArrayList<Student> failedStudents = new ArrayList<>();
+
+        for (Student student : studentList) {
+            if (student.getGpa() < 2.0) {
+                failedStudents.add(student);
+            }
+        }
+
+        return failedStudents;
+    }
+
 }

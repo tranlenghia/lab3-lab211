@@ -18,16 +18,30 @@ public class CourseTextFile implements IFileHelper<Course> {
     // Create a DateUtils object to process dates
     private final DateUtils dateUtils = new DateUtils();
 
-    // 1. Check duplicate Course ID
+    // Check duplicate registration by Course ID and Student ID
+//    private boolean registrationExists(
+//            ArrayList<Course> courses,
+//            String courseId,
+//            String studentId) {
+//
+//        for (Course course : courses) {
+//
+//            if (course.getCourseId().equalsIgnoreCase(courseId)
+//                    && course.getStudentId().equalsIgnoreCase(studentId)) {
+//
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
+    // Check whether Course ID already exists
     private boolean courseIdExists(
             ArrayList<Course> courses,
             String courseId) {
 
         for (Course course : courses) {
-
-            if (course.getCourseId()
-                    .equalsIgnoreCase(courseId)) {
-
+            if (course.getCourseId().equalsIgnoreCase(courseId.trim())) {
                 return true;
             }
         }
@@ -96,13 +110,21 @@ public class CourseTextFile implements IFileHelper<Course> {
                         continue;
                     }
 
-                    // Check duplicate Course ID
+                    // Check duplicate registration by the same student
+//                    if (registrationExists(courses, courseId, studentId)) {
+//
+//                        System.out.println(
+//                                "Skipping duplicate registration at line "
+//                                + lineNumber + ": "
+//                                + courseId + " - " + studentId);
+//
+//                        continue;
+//                    }
+// Course ID must be unique
                     if (courseIdExists(courses, courseId)) {
-
                         System.out.println(
                                 "Skipping duplicate Course ID at line "
-                                + lineNumber + ": "
-                                + courseId);
+                                + lineNumber + ": " + courseId);
 
                         continue;
                     }
